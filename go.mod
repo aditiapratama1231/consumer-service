@@ -1,4 +1,4 @@
-module magento-consume-service
+module magento-consumer-service
 
 go 1.12
 

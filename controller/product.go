@@ -2,7 +2,7 @@ package controller
 
 import (
 	"log"
-	"magento-consume-service/service"
+	"magento-consumer-service/service"
 )
 
 func (c *Controller) productManagement() {

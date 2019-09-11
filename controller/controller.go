@@ -2,8 +2,8 @@ package controller
 
 import (
 	"log"
-	"magento-consume-service/database/models"
-	"magento-consume-service/domain"
+	"magento-consumer-service/database/models"
+	"magento-consumer-service/domain"
 
 	"github.com/jinzhu/gorm"
 )

@@ -9,9 +9,9 @@ import (
 	"github.com/aws/aws-sdk-go/service/kinesis"
 	"github.com/jinzhu/gorm"
 
-	"magento-consume-service/config"
-	handle "magento-consume-service/controller"
-	"magento-consume-service/domain"
+	"magento-consumer-service/config"
+	handle "magento-consumer-service/controller"
+	"magento-consumer-service/domain"
 )
 
 // Consumer function to consume data from kinesis

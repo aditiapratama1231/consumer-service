@@ -7,7 +7,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 
-	"magento-consume-service/domain"
+	"magento-consumer-service/domain"
 )
 
 // AWSConnectKinesis function, used for connecting to aws-kinesis stream

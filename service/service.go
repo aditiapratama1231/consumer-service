@@ -1,7 +1,7 @@
 package service
 
 import (
-	"magento-consume-service/domain"
+	"magento-consumer-service/domain"
 
 	"github.com/jinzhu/gorm"
 )

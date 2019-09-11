@@ -7,8 +7,8 @@ import (
 
 	"github.com/joho/godotenv"
 
-	"magento-consume-service/config"
-	"magento-consume-service/consumer"
+	"magento-consumer-service/config"
+	"magento-consumer-service/consumer"
 )
 
 func main() {
