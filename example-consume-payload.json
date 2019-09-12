@@ -1,0 +1,16 @@
+{
+    "head": {
+        "service": "product",
+        "domain": "category",
+        "action_type": 1,
+        "action": "create"
+    },
+    "body": {
+        "payload": {
+            "category": {
+                "id": 1,
+                "name": "Men"
+            }
+        }
+    }
+}

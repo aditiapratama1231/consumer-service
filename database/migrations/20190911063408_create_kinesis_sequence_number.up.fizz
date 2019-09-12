@@ -1,0 +1,7 @@
+create_table("kinesis_sequence_numbers") {
+  t.Column("id", "integer", {primary: true})
+  t.Column("sequence_number","string",{})
+  t.Column("created_at", "timestamp", {"null": true})
+  t.Column("updated_at", "timestamp", {"null": true})
+  t.Column("deleted_at", "timestamp", {"null": true})
+}
