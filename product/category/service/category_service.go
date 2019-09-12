@@ -4,55 +4,49 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
-	"os"
 
 	"github.com/jinzhu/gorm"
 
 	"magento-consumer-service/config"
-	"magento-consumer-service/database/models"
 	"magento-consumer-service/domain"
 	"magento-consumer-service/product"
-	"magento-consumer-service/product/category"
 )
 
 type categoryService struct {
 	DB         *gorm.DB
-	Consume    *domain.Consume
-	Repository *product.ProductRepository
+	Repository product.ProductRepository
+	Request    config.Request
 }
 
-func NewCategoryService(DB *gorm.DB, domain *domain.Consume) category.CategoryService {
+func NewCategoryService(DB *gorm.DB, repository product.ProductRepository, request config.Request) CategoryService {
 	return &categoryService{
-		DB:      DB,
-		Consume: domain,
+		DB:         DB,
+		Repository: repository,
+		Request:    request,
 	}
 }
 
-func (c *categoryService) CreateCategory() error {
+func (c *categoryService) CreateCategory(consume *domain.Consume) error {
 	var (
-		kinesis      models.KinesisSequenceNumber
-		record       models.ProductRecord
 		client       = &http.Client{}
 		dataResponse interface{}
 		categoryData domain.Category
 	)
 
-	request := config.NewRequest(os.Getenv("MAGENTO_BASE_URL"))
-
 	// convert category payload
-	if c.Consume.Data.Body.Payload["category"] != nil {
-		categoryData = convertCategory(c.Consume.Data.Body.Payload["category"])
+	if consume.Data.Body.Payload["category"] != nil {
+		categoryData = convertCategory(consume.Data.Body.Payload["category"])
 	} else {
 		return errors.New("wrong payload")
 	}
 
-	reqBody, err := json.Marshal(c.Consume.Data)
+	reqBody, err := json.Marshal(consume.Data)
 	if err != nil {
 		return err
 	}
 
 	// POST Data
-	req, err := request.Post("/products", reqBody)
+	req, err := c.Request.Post("/products", reqBody)
 	if err != nil {
 		return err
 	}
@@ -69,28 +63,27 @@ func (c *categoryService) CreateCategory() error {
 	}
 
 	// if POST success, safe data to db
-	kinesis.SequenceNumber = *c.Consume.SequenceNumber
-	err = c.DB.Create(&kinesis).Error
+	_, err = c.Repository.SaveStream(*consume.SequenceNumber)
 	if err != nil {
 		return err
 	}
 
 	// save to record
-	record.MagentoID = 1 // change this code next
-	record.DashboardID = categoryData.ID
-	err = c.DB.Create(&record).Error
-	if err != nil {
-		return err
+	productRecord := domain.ProductRecord{
+		Type:        "category",
+		MagentoID:   1,
+		DashboardID: categoryData.ID,
 	}
+	_, err = c.Repository.SyncProduct(productRecord)
 
 	return nil
 }
 
-func (c *categoryService) UpdateCategory() error {
+func (c *categoryService) UpdateCategory(consume *domain.Consume) error {
 	return nil
 }
 
-func (c *categoryService) DeleteCategory() error {
+func (c *categoryService) DeleteCategory(consume *domain.Consume) error {
 	return nil
 }
 

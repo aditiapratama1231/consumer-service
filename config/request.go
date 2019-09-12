@@ -15,8 +15,8 @@ type request struct {
 	BaseURL string
 }
 
-func NewRequest(baseUrl string) request {
-	return request{
+func NewRequest(baseUrl string) Request {
+	return &request{
 		BaseURL: baseUrl,
 	}
 }
