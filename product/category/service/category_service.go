@@ -3,24 +3,32 @@ package service
 import (
 	"encoding/json"
 	"errors"
-	"log"
+	"net/http"
+	"os"
+
+	"github.com/jinzhu/gorm"
+
 	"magento-consumer-service/config"
 	"magento-consumer-service/database/models"
 	"magento-consumer-service/domain"
-	"os"
-
-	"net/http"
+	"magento-consumer-service/product"
+	"magento-consumer-service/product/category"
 )
 
-// CategoryService interface contain all service or function for brand
-type CategoryService interface {
-	CreateCategory() error
-	UpdateCategory() error
-	DeleteCategory() error
+type categoryService struct {
+	DB         *gorm.DB
+	Consume    *domain.Consume
+	Repository *product.ProductRepository
 }
 
-// CreateCategory /
-func (category *Service) CreateCategory() error {
+func NewCategoryService(DB *gorm.DB, domain *domain.Consume) category.CategoryService {
+	return &categoryService{
+		DB:      DB,
+		Consume: domain,
+	}
+}
+
+func (c *categoryService) CreateCategory() error {
 	var (
 		kinesis      models.KinesisSequenceNumber
 		record       models.ProductRecord
@@ -32,13 +40,13 @@ func (category *Service) CreateCategory() error {
 	request := config.NewRequest(os.Getenv("MAGENTO_BASE_URL"))
 
 	// convert category payload
-	if category.Consume.Data.Body.Payload["category"] != nil {
-		categoryData = convertCategory(category.Consume.Data.Body.Payload["category"])
+	if c.Consume.Data.Body.Payload["category"] != nil {
+		categoryData = convertCategory(c.Consume.Data.Body.Payload["category"])
 	} else {
 		return errors.New("wrong payload")
 	}
 
-	reqBody, err := json.Marshal(category.Consume.Data)
+	reqBody, err := json.Marshal(c.Consume.Data)
 	if err != nil {
 		return err
 	}
@@ -61,8 +69,8 @@ func (category *Service) CreateCategory() error {
 	}
 
 	// if POST success, safe data to db
-	kinesis.SequenceNumber = *category.Consume.SequenceNumber
-	err = category.DB.Create(&kinesis).Error
+	kinesis.SequenceNumber = *c.Consume.SequenceNumber
+	err = c.DB.Create(&kinesis).Error
 	if err != nil {
 		return err
 	}
@@ -70,7 +78,7 @@ func (category *Service) CreateCategory() error {
 	// save to record
 	record.MagentoID = 1 // change this code next
 	record.DashboardID = categoryData.ID
-	err = category.DB.Create(&record).Error
+	err = c.DB.Create(&record).Error
 	if err != nil {
 		return err
 	}
@@ -78,17 +86,11 @@ func (category *Service) CreateCategory() error {
 	return nil
 }
 
-// UpdateCategory /
-func (category *Service) UpdateCategory() error {
-	log.Println("update")
-	log.Println(*category.Consume.SequenceNumber)
+func (c *categoryService) UpdateCategory() error {
 	return nil
 }
 
-// DeleteCategory /
-func (category *Service) DeleteCategory() error {
-	log.Println("delete")
-	log.Println(*category.Consume.SequenceNumber)
+func (c *categoryService) DeleteCategory() error {
 	return nil
 }
 

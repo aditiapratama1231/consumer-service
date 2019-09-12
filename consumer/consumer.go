@@ -48,8 +48,8 @@ func Consumer(db *gorm.DB) error {
 			continue
 		}
 		if len(records.Records) > 0 {
-			for _, d := range records.Records {
-				err := decodeRecord(d, db)
+			for _, record := range records.Records {
+				err := decodeRecord(record, db)
 				if err != nil {
 					log.Println(err)
 					continue
