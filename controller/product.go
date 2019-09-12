@@ -28,6 +28,26 @@ func (c *Controller) productManagement() {
 		default:
 			log.Println("wrong action input")
 		}
+	case "brand":
+		switch action := c.Consume.Data.Head.Action; action {
+		case "create":
+			err := srv.CreateBrand()
+			if err != nil {
+				log.Println(err)
+			}
+		case "update":
+			err := srv.UpdateBrand()
+			if err != nil {
+				log.Println(err)
+			}
+		case "delete":
+			err := srv.DeleteBrand()
+			if err != nil {
+				log.Println(err)
+			}
+		default:
+			log.Println("wrong action input")
+		}
 	default:
 		log.Println("wrong domain input")
 	}
