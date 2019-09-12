@@ -29,7 +29,7 @@ func (category *Service) CreateCategory() error {
 		categoryData domain.Category
 	)
 
-	rqst := config.NewRequest(os.Getenv("CAMUNDA_BASE_URL"))
+	rqst := config.NewRequest(os.Getenv("MAGENTO_BASE_URL"))
 
 	// convert category payload
 	if category.Consume.Data.Body.Payload["category"] != nil {
