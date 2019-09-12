@@ -3,12 +3,16 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"time"
 
 	"github.com/joho/godotenv"
 
 	"magento-consumer-service/config"
 	"magento-consumer-service/consumer"
+	_controller "magento-consumer-service/controller"
+	"magento-consumer-service/product"
+	_categoryService "magento-consumer-service/product/category/service"
 )
 
 func main() {
@@ -17,7 +21,16 @@ func main() {
 		fmt.Print(e)
 	}
 
+	magentoBaseURL := os.Getenv("MAGENTO_BASE_URL")
+
 	db := config.DBInit()
+	request := config.NewRequest(magentoBaseURL)
+
+	// initial
+	productRepository := product.NewProductRepository(db)
+
+	categoryService := _categoryService.NewCategoryService(db, productRepository, request)
+	controller := _controller.NewController(db, categoryService)
 
 	errChan := make(chan error)
 
@@ -25,9 +38,10 @@ func main() {
 	go func() {
 		log.Println("ready to consume data")
 		for {
-			err := consumer.Consumer(db)
+			consumer := consumer.NewConsumer(db, controller)
+			err := consumer.MainConsumer()
 			if err != nil {
-				log.Println(err)
+				log.Println("Error Get Consumer data", err)
 			}
 			time.Sleep(30000 * time.Millisecond)
 		}

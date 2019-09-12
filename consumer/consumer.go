@@ -10,12 +10,29 @@ import (
 	"github.com/jinzhu/gorm"
 
 	"magento-consumer-service/config"
-	handle "magento-consumer-service/controller"
+	"magento-consumer-service/controller"
 	"magento-consumer-service/domain"
 )
 
+type consumer struct {
+	DB         *gorm.DB
+	Controller controller.Controller
+}
+
+type Consumer interface {
+	MainConsumer() error
+	DecodeRecord(*kinesis.Record) error
+}
+
+func NewConsumer(db *gorm.DB, ctrl controller.Controller) Consumer {
+	return &consumer{
+		DB:         db,
+		Controller: ctrl,
+	}
+}
+
 // Consumer function to consume data from kinesis
-func Consumer(db *gorm.DB) error {
+func (cons *consumer) MainConsumer() error {
 	ac := config.AWSConnectKinesis()
 	kc := kinesis.New(ac.Session)
 	streamName := aws.String(ac.StreamName)
@@ -48,8 +65,8 @@ func Consumer(db *gorm.DB) error {
 			continue
 		}
 		if len(records.Records) > 0 {
-			for _, d := range records.Records {
-				err := decodeRecord(d, db)
+			for _, record := range records.Records {
+				err := cons.DecodeRecord(record)
 				if err != nil {
 					log.Println(err)
 					continue
@@ -65,13 +82,12 @@ func Consumer(db *gorm.DB) error {
 	return nil
 }
 
-func decodeRecord(record *kinesis.Record, db *gorm.DB) error {
+func (cons *consumer) DecodeRecord(record *kinesis.Record) error {
 	data := &domain.Consume{SequenceNumber: record.SequenceNumber}
 	err := json.Unmarshal([]byte(record.Data), &data.Data)
 	if err != nil {
 		return err
 	}
-	c := &handle.Controller{DB: db, Consume: data}
-	c.MainController()
+	cons.Controller.MainController(data)
 	return nil
 }
