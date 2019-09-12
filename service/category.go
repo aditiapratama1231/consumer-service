@@ -1,12 +1,13 @@
 package service
 
 import (
-	"bytes"
 	"encoding/json"
 	"errors"
 	"log"
+	"magento-consumer-service/config"
 	"magento-consumer-service/database/models"
 	"magento-consumer-service/domain"
+	"os"
 
 	"net/http"
 )
@@ -28,6 +29,8 @@ func (category *Service) CreateCategory() error {
 		categoryData domain.Category
 	)
 
+	rqst := config.NewRequest(os.Getenv("CAMUNDA_BASE_URL"))
+
 	// convert category payload
 	if category.Consume.Data.Body.Payload["category"] != nil {
 		categoryData = convertCategory(category.Consume.Data.Body.Payload["category"])
@@ -41,7 +44,7 @@ func (category *Service) CreateCategory() error {
 		return err
 	}
 
-	request, err := http.NewRequest("POST", "https://httpbin.org/post", bytes.NewBuffer(reqBody))
+	request, err := rqst.Post("/products", reqBody)
 	if err != nil {
 		return err
 	}
