@@ -50,16 +50,19 @@ func (brand *brandService) CreateBrand(consume *domain.Consume) error {
 	reqBody, err := json.Marshal(consume.Data)
 	if err != nil {
 		log.Println("Error Encoding brand payload : " + err.Error())
+		return err
 	}
 
 	request, err := rqst.Post("/products", reqBody)
 	if err != nil {
 		log.Println("Error SetUp API call : " + err.Error())
+		return err
 	}
 
 	response, err := client.Do(request)
 	if err != nil {
 		log.Println("Error Decode Response : " + err.Error())
+		return err
 	}
 	defer response.Body.Close()
 
@@ -69,8 +72,6 @@ func (brand *brandService) CreateBrand(consume *domain.Consume) error {
 	}
 
 	// if POST success, safe data to db
-	// kinesis.SequenceNumber = *consume.SequenceNumber
-	// err = brand.DB.Create(&kinesis).Error
 	_, err = brand.Repository.SaveStream(*consume.SequenceNumber)
 	if err != nil {
 		return err

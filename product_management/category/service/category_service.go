@@ -56,12 +56,14 @@ func (c *categoryService) CreateCategory(consume *domain.Consume) error {
 	response, err := client.Do(req)
 	if err != nil {
 		log.Println("Error API call : " + err.Error())
+		return err
 	}
 	defer response.Body.Close()
 
 	err = json.NewDecoder(response.Body).Decode(&dataResponse)
 	if err != nil {
 		log.Println("Error Decode Response : " + err.Error())
+		return err
 	}
 
 	// if POST success, safe data to db
