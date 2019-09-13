@@ -11,8 +11,8 @@ import (
 	"magento-consumer-service/config"
 	"magento-consumer-service/consumer"
 	_controller "magento-consumer-service/controller"
-	product "magento-consumer-service/product_management"
 	_categoryService "magento-consumer-service/product_management/category/service"
+	_productRepository "magento-consumer-service/product_management/repository"
 )
 
 func main() {
@@ -27,9 +27,10 @@ func main() {
 	request := config.NewRequest(magentoBaseURL)
 
 	// initial
-	productRepository := product.NewProductRepository(db)
-
+	productRepository := _productRepository.NewProductRepository(db)
 	categoryService := _categoryService.NewCategoryService(db, productRepository, request)
+
+	// initiate controller
 	controller := _controller.NewController(db, categoryService)
 
 	errChan := make(chan error)

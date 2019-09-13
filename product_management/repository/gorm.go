@@ -1,23 +1,18 @@
-package product
+package repository
 
 import (
-	"github.com/jinzhu/gorm"
-
 	"magento-consumer-service/database/models"
 	"magento-consumer-service/domain"
-)
+	product "magento-consumer-service/product_management"
 
-type ProductRepository interface {
-	SyncProduct(domain.ProductRecord) (interface{}, error)
-	ShowProductID(domain.ProductRecord) (interface{}, error)
-	SaveStream(string) (interface{}, error)
-}
+	"github.com/jinzhu/gorm"
+)
 
 type productRepository struct {
 	DB *gorm.DB
 }
 
-func NewProductRepository(DB *gorm.DB) ProductRepository {
+func NewProductRepository(DB *gorm.DB) product.ProductRepository {
 	return &productRepository{
 		DB: DB,
 	}
