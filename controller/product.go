@@ -7,6 +7,7 @@ import (
 
 func (c *controller) ProductManagement(consume *domain.Consume) {
 	switch domain := consume.Data.Head.Domain; domain {
+
 	case "category":
 		switch action := consume.Data.Head.Action; action {
 		case "create":
@@ -27,20 +28,21 @@ func (c *controller) ProductManagement(consume *domain.Consume) {
 		default:
 			log.Println("wrong action input")
 		}
+
 	case "brand":
-		switch action := c.Consume.Data.Head.Action; action {
+		switch action := consume.Data.Head.Action; action {
 		case "create":
-			err := srv.CreateBrand()
+			err := c.BrandService.CreateBrand(consume)
 			if err != nil {
 				log.Println(err)
 			}
 		case "update":
-			err := srv.UpdateBrand()
+			err := c.BrandService.UpdateBrand(consume)
 			if err != nil {
 				log.Println(err)
 			}
 		case "delete":
-			err := srv.DeleteBrand()
+			err := c.BrandService.DeleteBrand(consume)
 			if err != nil {
 				log.Println(err)
 			}

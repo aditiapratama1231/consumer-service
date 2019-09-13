@@ -4,23 +4,33 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
+	"net/http"
+	"os"
+
+	"github.com/jinzhu/gorm"
+
 	"magento-consumer-service/config"
 	"magento-consumer-service/database/models"
 	"magento-consumer-service/domain"
-	"os"
-
-	"net/http"
+	product "magento-consumer-service/product_management"
 )
 
-// BrandService interface contain all service or function for brand
-type BrandService interface {
-	CreateBrand() error
-	UpdateBrand() error
-	DeleteBrand() error
+type brandService struct {
+	DB         *gorm.DB
+	Repository product.ProductRepository
+	Request    config.Request
+}
+
+func NewBrandService(db *gorm.DB, repository product.ProductRepository, request config.Request) BrandService {
+	return &brandService{
+		DB:         db,
+		Repository: repository,
+		Request:    request,
+	}
 }
 
 // CreateBrand /
-func (brand *Service) CreateBrand() error {
+func (brand *brandService) CreateBrand(consume *domain.Consume) error {
 	var (
 		kinesis      models.KinesisSequenceNumber
 		record       models.ProductRecord
@@ -32,14 +42,14 @@ func (brand *Service) CreateBrand() error {
 	rqst := config.NewRequest(os.Getenv("MAGENTO_BASE_URL"))
 
 	// convert brand payload
-	if brand.Consume.Data.Body.Payload["brand"] != nil {
-		brandData = convertBrand(brand.Consume.Data.Body.Payload["brand"])
+	if consume.Data.Body.Payload["brand"] != nil {
+		brandData = convertBrand(consume.Data.Body.Payload["brand"])
 	} else {
 		return errors.New("wrong payload")
 	}
 
 	// POST data
-	reqBody, err := json.Marshal(brand.Consume.Data)
+	reqBody, err := json.Marshal(consume.Data)
 	if err != nil {
 		return err
 	}
@@ -61,7 +71,7 @@ func (brand *Service) CreateBrand() error {
 	}
 
 	// if POST success, safe data to db
-	kinesis.SequenceNumber = *brand.Consume.SequenceNumber
+	kinesis.SequenceNumber = *consume.SequenceNumber
 	err = brand.DB.Create(&kinesis).Error
 	if err != nil {
 		return err
@@ -79,16 +89,16 @@ func (brand *Service) CreateBrand() error {
 }
 
 // UpdateBrand /
-func (brand *Service) UpdateBrand() error {
+func (brand *brandService) UpdateBrand(domain *domain.Consume) error {
 	log.Println("update")
-	log.Println(*brand.Consume.SequenceNumber)
+	// log.Println(*consume.SequenceNumber)
 	return nil
 }
 
 // DeleteBrand /
-func (brand *Service) DeleteBrand() error {
+func (brand *brandService) DeleteBrand(domain *domain.Consume) error {
 	log.Println("delete")
-	log.Println(*brand.Consume.SequenceNumber)
+	// log.Println(*consume.SequenceNumber)
 	return nil
 }
 

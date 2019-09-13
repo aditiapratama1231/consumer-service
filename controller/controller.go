@@ -4,6 +4,7 @@ import (
 	"log"
 	"magento-consumer-service/database/models"
 	"magento-consumer-service/domain"
+	_brandService "magento-consumer-service/product_management/brand/service"
 	_categoryService "magento-consumer-service/product_management/category/service"
 
 	"github.com/jinzhu/gorm"
@@ -13,6 +14,7 @@ import (
 type controller struct {
 	DB              *gorm.DB
 	CategoryService _categoryService.CategoryService
+	BrandService    _brandService.BrandService
 }
 
 type Controller interface {
@@ -21,10 +23,11 @@ type Controller interface {
 	OrderManagement(*domain.Consume)
 }
 
-func NewController(db *gorm.DB, categorySrv _categoryService.CategoryService) Controller {
+func NewController(db *gorm.DB, categorySrv _categoryService.CategoryService, brandSrv _brandService.BrandService) Controller {
 	return &controller{
 		DB:              db,
 		CategoryService: categorySrv,
+		BrandService:    brandSrv,
 	}
 }
 

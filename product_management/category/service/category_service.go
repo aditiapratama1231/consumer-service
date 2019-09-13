@@ -18,9 +18,9 @@ type categoryService struct {
 	Request    config.Request
 }
 
-func NewCategoryService(DB *gorm.DB, repository product.ProductRepository, request config.Request) CategoryService {
+func NewCategoryService(db *gorm.DB, repository product.ProductRepository, request config.Request) CategoryService {
 	return &categoryService{
-		DB:         DB,
+		DB:         db,
 		Repository: repository,
 		Request:    request,
 	}
