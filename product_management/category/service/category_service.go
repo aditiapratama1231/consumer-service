@@ -44,7 +44,7 @@ func (c *categoryService) CreateCategory(consume *domain.Consume) error {
 
 	reqBody, err := json.Marshal(consume.Data)
 	if err != nil {
-		log.Println("Error Encoding payload : " + err.Error())
+		log.Println("Error Encoding category payload : " + err.Error())
 	}
 
 	// POST Data
