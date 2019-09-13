@@ -25,11 +25,15 @@ func (p *productRepository) SyncProduct(data domain.ProductRecord) (interface{},
 	product.DashboardID = data.DashboardID
 	product.MagentoID = data.MagentoID
 
-	err := p.DB.Create(&product).Error
+	tx := p.DB.Begin()
+
+	err := tx.Create(&product).Error
 	if err != nil {
+		tx.Rollback()
 		return nil, err
 	}
 
+	tx.Commit()
 	return product, nil
 }
 
@@ -46,10 +50,14 @@ func (p *productRepository) SaveStream(sequenceNumber string) (interface{}, erro
 
 	kinesis.SequenceNumber = sequenceNumber
 
-	err := p.DB.Create(&kinesis).Error
+	tx := p.DB.Begin()
+
+	err := tx.Create(&kinesis).Error
 	if err != nil {
+		tx.Rollback()
 		return nil, err
 	}
 
+	tx.Commit()
 	return kinesis, nil
 }
