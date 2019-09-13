@@ -9,7 +9,7 @@ import (
 
 	"magento-consumer-service/config"
 	"magento-consumer-service/domain"
-	"magento-consumer-service/product"
+	product "magento-consumer-service/product_management"
 )
 
 type categoryService struct {

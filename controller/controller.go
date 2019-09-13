@@ -4,7 +4,7 @@ import (
 	"log"
 	"magento-consumer-service/database/models"
 	"magento-consumer-service/domain"
-	_categoryService "magento-consumer-service/product/category/service"
+	_categoryService "magento-consumer-service/product_management/category/service"
 
 	"github.com/jinzhu/gorm"
 )

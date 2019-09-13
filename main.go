@@ -11,8 +11,8 @@ import (
 	"magento-consumer-service/config"
 	"magento-consumer-service/consumer"
 	_controller "magento-consumer-service/controller"
-	"magento-consumer-service/product"
-	_categoryService "magento-consumer-service/product/category/service"
+	product "magento-consumer-service/product_management"
+	_categoryService "magento-consumer-service/product_management/category/service"
 )
 
 func main() {
