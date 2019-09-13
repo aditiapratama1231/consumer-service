@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/json"
 	"errors"
+	"log"
 	"net/http"
 
 	"github.com/jinzhu/gorm"
@@ -34,32 +35,33 @@ func (c *categoryService) CreateCategory(consume *domain.Consume) error {
 	)
 
 	// convert category payload
-	if consume.Data.Body.Payload["category"] != nil {
-		categoryData = convertCategory(consume.Data.Body.Payload["category"])
+	payload := consume.Data.Body.Payload["category"]
+	if payload != nil {
+		categoryData = convertCategory(payload)
 	} else {
 		return errors.New("wrong payload")
 	}
 
 	reqBody, err := json.Marshal(consume.Data)
 	if err != nil {
-		return err
+		log.Println("Error Encoding payload : " + err.Error())
 	}
 
 	// POST Data
 	req, err := c.Request.Post("/products", reqBody)
 	if err != nil {
-		return err
+		log.Println("Error SetUp API call : " + err.Error())
 	}
 
 	response, err := client.Do(req)
 	if err != nil {
-		return err
+		log.Println("Error API call : " + err.Error())
 	}
 	defer response.Body.Close()
 
 	err = json.NewDecoder(response.Body).Decode(&dataResponse)
 	if err != nil {
-		return err
+		log.Println("Error Decode Response : " + err.Error())
 	}
 
 	// if POST success, safe data to db
@@ -69,12 +71,11 @@ func (c *categoryService) CreateCategory(consume *domain.Consume) error {
 	}
 
 	// save to record
-	productRecord := domain.ProductRecord{
+	_, err = c.Repository.SyncProduct(domain.ProductRecord{
 		Type:        "category",
 		MagentoID:   1,
 		DashboardID: categoryData.ID,
-	}
-	_, err = c.Repository.SyncProduct(productRecord)
+	})
 
 	return nil
 }
