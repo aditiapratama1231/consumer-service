@@ -10,7 +10,6 @@ import (
 	"github.com/jinzhu/gorm"
 
 	"magento-consumer-service/config"
-	"magento-consumer-service/database/models"
 	"magento-consumer-service/domain"
 	product "magento-consumer-service/product_management"
 )
@@ -32,8 +31,6 @@ func NewBrandService(db *gorm.DB, repository product.ProductRepository, request 
 // CreateBrand /
 func (brand *brandService) CreateBrand(consume *domain.Consume) error {
 	var (
-		kinesis      models.KinesisSequenceNumber
-		record       models.ProductRecord
 		client       = &http.Client{}
 		dataResponse interface{}
 		brandData    domain.Brand
@@ -42,8 +39,9 @@ func (brand *brandService) CreateBrand(consume *domain.Consume) error {
 	rqst := config.NewRequest(os.Getenv("MAGENTO_BASE_URL"))
 
 	// convert brand payload
-	if consume.Data.Body.Payload["brand"] != nil {
-		brandData = convertBrand(consume.Data.Body.Payload["brand"])
+	payload := consume.Data.Body.Payload["brand"]
+	if payload != nil {
+		brandData = convertBrand(payload)
 	} else {
 		return errors.New("wrong payload")
 	}
@@ -51,17 +49,17 @@ func (brand *brandService) CreateBrand(consume *domain.Consume) error {
 	// POST data
 	reqBody, err := json.Marshal(consume.Data)
 	if err != nil {
-		return err
+		log.Println("Error Encoding brand payload : " + err.Error())
 	}
 
 	request, err := rqst.Post("/products", reqBody)
 	if err != nil {
-		return err
+		log.Println("Error SetUp API call : " + err.Error())
 	}
 
 	response, err := client.Do(request)
 	if err != nil {
-		return err
+		log.Println("Error Decode Response : " + err.Error())
 	}
 	defer response.Body.Close()
 
@@ -71,16 +69,19 @@ func (brand *brandService) CreateBrand(consume *domain.Consume) error {
 	}
 
 	// if POST success, safe data to db
-	kinesis.SequenceNumber = *consume.SequenceNumber
-	err = brand.DB.Create(&kinesis).Error
+	// kinesis.SequenceNumber = *consume.SequenceNumber
+	// err = brand.DB.Create(&kinesis).Error
+	_, err = brand.Repository.SaveStream(*consume.SequenceNumber)
 	if err != nil {
 		return err
 	}
 
 	// save to record
-	record.MagentoID = 1 // change this code next
-	record.DashboardID = brandData.ID
-	err = brand.DB.Create(&record).Error
+	_, err = brand.Repository.SyncProduct(domain.ProductRecord{
+		Type:        "brand",
+		MagentoID:   1,
+		DashboardID: brandData.ID,
+	})
 	if err != nil {
 		return err
 	}
