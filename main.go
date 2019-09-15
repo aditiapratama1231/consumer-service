@@ -29,7 +29,7 @@ func main() {
 
 	// initiate request configuration
 	request := config.NewRequest(magentoBaseURL)
-	err := request.GetToken()
+	err := request.SetToken()
 	if err != nil {
 		log.Println("Error getting token : " + err.Error())
 	}

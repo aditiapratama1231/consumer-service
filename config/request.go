@@ -15,10 +15,11 @@ import (
 
 type Request interface {
 	Send(string, string, []byte) (*req.Resp, error)
-	GetToken() error
 	Post(string, []byte) (*req.Resp, error)
 	Patch(string, []byte) (*req.Resp, error)
 	Delete(string) (*req.Resp, error)
+	GetToken() string
+	SetToken() error
 }
 
 type request struct {
@@ -32,7 +33,7 @@ func NewRequest(baseUrl string) Request {
 	}
 }
 
-func (r *request) GetToken() error {
+func (r *request) SetToken() error {
 	e := godotenv.Load() //Load .env file
 	if e != nil {
 		fmt.Print(e)
@@ -58,11 +59,13 @@ func (r *request) GetToken() error {
 	var getToken tokenRaw
 	req.ToJSON(&getToken)
 
-	_ = request{
-		Token: string(getToken),
-	}
+	r.Token = string(getToken)
 
 	return nil
+}
+
+func (r request) GetToken() string {
+	return r.Token
 }
 
 func (r *request) Send(method string, url string, body []byte) (*req.Resp, error) {
@@ -72,27 +75,21 @@ func (r *request) Send(method string, url string, body []byte) (*req.Resp, error
 
 	tokenHeader := req.Header{
 		"Content-Type":  "application/json",
-		"Authorization": "Bearer " + r.Token,
+		"Authorization": "Bearer " + r.GetToken(),
 	}
 
 	switch method {
 	case "TOKEN":
-		reqs, err := req.Post(r.BaseURL+url, header, bytes.NewBuffer(body))
-		return reqs, err
+		return req.Post(r.BaseURL+url, header, bytes.NewBuffer(body))
 	case "GET":
-		reqs, err := req.Get(r.BaseURL+url, header, bytes.NewBuffer(body))
-		return reqs, err
+		return req.Get(r.BaseURL+url, header, bytes.NewBuffer(body))
 	case "POST":
-		reqs, err := req.Post(r.BaseURL+url, tokenHeader, bytes.NewBuffer(body))
-		return reqs, err
+		return req.Post(r.BaseURL+url, tokenHeader, bytes.NewBuffer(body))
 	case "PATCH":
-		reqs, err := req.Patch(r.BaseURL+url, tokenHeader, bytes.NewBuffer(body))
-		return reqs, err
+		return req.Patch(r.BaseURL+url, tokenHeader, bytes.NewBuffer(body)
 	case "DELETE":
-		reqs, err := req.Delete(r.BaseURL+url, tokenHeader)
-		return reqs, err
+		return req.Delete(r.BaseURL+url, tokenHeader)
 	}
-
 	return nil, nil
 }
 
