@@ -79,11 +79,14 @@ func (r *request) Send(method string, url string, body []byte) (*req.Resp, error
 	case "TOKEN":
 		reqs, err := req.Post(r.BaseURL+url, header, bytes.NewBuffer(body))
 		return reqs, err
+	case "GET":
+		reqs, err := req.Get(r.BaseURL+url, header, bytes.NewBuffer(body))
+		return reqs, err
 	case "POST":
 		reqs, err := req.Post(r.BaseURL+url, tokenHeader, bytes.NewBuffer(body))
 		return reqs, err
 	case "PATCH":
-		reqs, err := req.Post(r.BaseURL+url, tokenHeader, bytes.NewBuffer(body))
+		reqs, err := req.Patch(r.BaseURL+url, tokenHeader, bytes.NewBuffer(body))
 		return reqs, err
 	case "DELETE":
 		reqs, err := req.Delete(r.BaseURL+url, tokenHeader)
