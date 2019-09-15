@@ -7,6 +7,26 @@ import (
 
 func (c *controller) ProductManagement(consume *domain.Consume) {
 	switch domain := consume.Data.Head.Domain; domain {
+	case "product":
+		switch action := consume.Data.Head.Action; action {
+		case "create":
+			err := c.ProductService.CreateProduct(consume)
+			if err != nil {
+				log.Println("DISINI ", err)
+			}
+		case "update":
+			err := c.ProductService.UpdateProduct(consume)
+			if err != nil {
+				log.Println(err)
+			}
+		case "delete":
+			err := c.ProductService.DeleteProduct(consume)
+			if err != nil {
+				log.Println(err)
+			}
+		default:
+			log.Println("wrong action input")
+		}
 
 	case "category":
 		switch action := consume.Data.Head.Action; action {

@@ -14,6 +14,7 @@ import (
 
 	_brandService "magento-consumer-service/product_management/brand/service"
 	_categoryService "magento-consumer-service/product_management/category/service"
+	_productService "magento-consumer-service/product_management/product/service"
 
 	_productRepository "magento-consumer-service/product_management/repository"
 )
@@ -26,21 +27,27 @@ func main() {
 
 	magentoBaseURL := os.Getenv("MAGENTO_BASE_URL")
 
-	db := config.DBInit()
+	// initiate request configuration
 	request := config.NewRequest(magentoBaseURL)
 	err := request.GetToken()
-
 	if err != nil {
 		log.Println("Error getting token : " + err.Error())
 	}
 
-	// initial
+	db := config.DBInit()
+
+	// initiate instance
 	productRepository := _productRepository.NewProductRepository(db)
+
+	productService := _productService.NewProductService(db, productRepository, request)
 	categoryService := _categoryService.NewCategoryService(db, productRepository, request)
 	brandService := _brandService.NewBrandService(db, productRepository, request)
 
 	// initiate controller
-	controller := _controller.NewController(db, categoryService, brandService)
+	controller := _controller.NewController(db,
+		categoryService,
+		brandService,
+		productService)
 
 	errChan := make(chan error)
 
@@ -48,6 +55,7 @@ func main() {
 	go func() {
 		log.Println("ready to consume data")
 		for {
+			// initial consumer configuration
 			consumer := consumer.NewConsumer(db, controller)
 			err := consumer.MainConsumer()
 			if err != nil {
