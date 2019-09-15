@@ -28,6 +28,11 @@ func main() {
 
 	db := config.DBInit()
 	request := config.NewRequest(magentoBaseURL)
+	err := request.GetToken()
+
+	if err != nil {
+		log.Println("Error getting token : " + err.Error())
+	}
 
 	// initial
 	productRepository := _productRepository.NewProductRepository(db)

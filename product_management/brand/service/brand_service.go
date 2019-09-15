@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
-	"net/http"
-	"os"
 
 	"github.com/jinzhu/gorm"
 
@@ -31,12 +29,9 @@ func NewBrandService(db *gorm.DB, repository product.ProductRepository, request 
 // CreateBrand /
 func (brand *brandService) CreateBrand(consume *domain.Consume) error {
 	var (
-		client       = &http.Client{}
 		dataResponse interface{}
 		brandData    domain.Brand
 	)
-
-	rqst := config.NewRequest(os.Getenv("MAGENTO_BASE_URL"))
 
 	// convert brand payload
 	payload := consume.Data.Body.Payload["brand"]
@@ -53,23 +48,14 @@ func (brand *brandService) CreateBrand(consume *domain.Consume) error {
 		return err
 	}
 
-	request, err := rqst.Post("/products", reqBody)
+	req, err := brand.Request.Post("/products", reqBody)
 	if err != nil {
 		log.Println("Error SetUp API call : " + err.Error())
 		return err
 	}
 
-	response, err := client.Do(request)
-	if err != nil {
-		log.Println("Error Decode Response : " + err.Error())
-		return err
-	}
-	defer response.Body.Close()
-
-	err = json.NewDecoder(response.Body).Decode(&dataResponse)
-	if err != nil {
-		return err
-	}
+	req.ToJSON(&dataResponse)
+	log.Println(dataResponse)
 
 	// if POST success, safe data to db
 	_, err = brand.Repository.SaveStream(*consume.SequenceNumber)

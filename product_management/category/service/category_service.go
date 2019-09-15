@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"log"
-	"net/http"
 
 	"github.com/jinzhu/gorm"
 
@@ -29,7 +28,6 @@ func NewCategoryService(db *gorm.DB, repository product.ProductRepository, reque
 
 func (c *categoryService) CreateCategory(consume *domain.Consume) error {
 	var (
-		client       = &http.Client{}
 		dataResponse interface{}
 		categoryData domain.Category
 	)
@@ -53,18 +51,8 @@ func (c *categoryService) CreateCategory(consume *domain.Consume) error {
 		log.Println("Error SetUp API call : " + err.Error())
 	}
 
-	response, err := client.Do(req)
-	if err != nil {
-		log.Println("Error API call : " + err.Error())
-		return err
-	}
-	defer response.Body.Close()
-
-	err = json.NewDecoder(response.Body).Decode(&dataResponse)
-	if err != nil {
-		log.Println("Error Decode Response : " + err.Error())
-		return err
-	}
+	req.ToJSON(&dataResponse)
+	log.Println(dataResponse)
 
 	// if POST success, safe data to db
 	_, err = c.Repository.SaveStream(*consume.SequenceNumber)
