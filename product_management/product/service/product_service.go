@@ -26,9 +26,13 @@ func NewProductService(db *gorm.DB, repository product.ProductRepository, reques
 	}
 }
 
+type MagentoResponse struct {
+	ID int `json:"id"`
+}
+
 func (product *productService) CreateProduct(consume *domain.Consume) error {
 	var (
-		dataResponse interface{}
+		magentoResponse MagentoResponse
 	)
 
 	payload := consume.Data.Body.Payload
@@ -45,7 +49,7 @@ func (product *productService) CreateProduct(consume *domain.Consume) error {
 		return err
 	}
 
-	req.ToJSON(&dataResponse)
+	req.ToJSON(&magentoResponse)
 
 	_, err = product.Repository.SaveStream(*consume.SequenceNumber)
 	if err != nil {
@@ -54,10 +58,9 @@ func (product *productService) CreateProduct(consume *domain.Consume) error {
 
 	dashboardID, err := strconv.Atoi(consume.Data.Head.Dashboard)
 	_, err = product.Repository.SyncProduct(domain.ProductRecord{
-		Type:           "product",
-		MagentoID:      1,
-		DashboardID:    dashboardID,
-		SequenceNumber: *consume.SequenceNumber,
+		Type:        "product",
+		MagentoID:   magentoResponse.ID,
+		DashboardID: dashboardID,
 	})
 
 	return nil
