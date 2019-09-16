@@ -19,6 +19,7 @@ type Consume struct {
 			Domain     string
 			ActionType uint16
 			Action     string
+			Dashboard  string
 		}
 		Body struct {
 			Payload map[string]interface{}

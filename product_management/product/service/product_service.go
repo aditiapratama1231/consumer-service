@@ -2,9 +2,8 @@ package service
 
 import (
 	"encoding/json"
-	"errors"
-	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/jinzhu/gorm"
 
@@ -30,17 +29,10 @@ func NewProductService(db *gorm.DB, repository product.ProductRepository, reques
 func (product *productService) CreateProduct(consume *domain.Consume) error {
 	var (
 		dataResponse interface{}
-		productData  domain.Product
 	)
-	fmt.Println("hereee")
-	payload := consume.Data.Body.Payload["product"]
-	if payload != nil {
-		productData = convertProduct(payload)
-	} else {
-		return errors.New("wrong payload")
-	}
 
-	reqBody, err := json.Marshal(consume.Data)
+	payload := consume.Data.Body.Payload
+	reqBody, err := json.Marshal(payload)
 	if err != nil {
 		log.Println("Error encoding product payload " + err.Error())
 	}
@@ -58,10 +50,12 @@ func (product *productService) CreateProduct(consume *domain.Consume) error {
 		return err
 	}
 
+	dashboardID, err := strconv.Atoi(consume.Data.Head.Dashboard)
 	_, err = product.Repository.SyncProduct(domain.ProductRecord{
-		Type:        "product",
-		MagentoID:   1,
-		DashboardID: productData.ProductSupplierID,
+		Type:           "product",
+		MagentoID:      1,
+		DashboardID:    dashboardID,
+		SequenceNumber: *consume.SequenceNumber,
 	})
 
 	return nil
@@ -73,17 +67,4 @@ func (product *productService) UpdateProduct(consume *domain.Consume) error {
 
 func (product *productService) DeleteProduct(consume *domain.Consume) error {
 	return nil
-}
-
-func convertProduct(data interface{}) domain.Product {
-	m := data.(map[string]interface{})
-	product := domain.Product{}
-	if name, ok := m["name"].(string); ok {
-		product.Name = name
-	}
-
-	if id, ok := m["id"].(float64); ok {
-		product.ProductSupplierID = int(id)
-	}
-	return product
 }

@@ -24,6 +24,7 @@ func (p *productRepository) SyncProduct(data domain.ProductRecord) (interface{},
 	product.Type = data.Type
 	product.DashboardID = data.DashboardID
 	product.MagentoID = data.MagentoID
+	product.SequenceNumber = data.SequenceNumber
 
 	tx := p.DB.Begin()
 
