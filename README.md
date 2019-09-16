@@ -11,6 +11,9 @@
 - `go get -u`
 - `go run main.go` to run the server
 
+## Debugging
+- Please to update `REQUEST_DEBUG` to true, to debug request traffic
+
 ## Database
 - `soda g config` to create `database.yml` configuration
 - `soda create -e development` (to create database development) [more](https://gobuffalo.io/en/docs/db/toolbox/)
