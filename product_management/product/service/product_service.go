@@ -94,9 +94,8 @@ func (product *productService) UpdateProduct(consume *domain.Consume) error {
 
 	endpoint := "/products/" + prd.SKU
 	req, err := product.Request.Put(endpoint, reqBody)
-
 	if err != nil {
-		log.Printf("%+v", err)
+		log.Printf("%+v", req)
 		return err
 	}
 
@@ -123,6 +122,32 @@ func (product *productService) UpdateProduct(consume *domain.Consume) error {
 }
 
 func (product *productService) DeleteProduct(consume *domain.Consume) error {
+	var (
+		magentoResponse MagentoResponse
+	)
+
+	dashboardID, err := strconv.Atoi(consume.Data.Head.Dashboard)
+	prd, err := product.Repository.GetMagentoID(dashboardID)
+	if err != nil {
+		log.Println("Error get magento id from database : " + err.Error())
+		return err
+	}
+
+	endpoint := "/products/" + prd.SKU
+	req, err := product.Request.Delete(endpoint)
+	log.Printf("%+v", req)
+	if err != nil {
+		log.Printf("%+v", req)
+		return err
+	}
+
+	req.ToJSON(&magentoResponse)
+	_, err = product.Repository.SaveStream(*consume.SequenceNumber)
+	if err != nil {
+		log.Println("Error save stream to database : " + err.Error())
+		return err
+	}
+
 	return nil
 }
 
