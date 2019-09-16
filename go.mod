@@ -10,5 +10,7 @@ require (
 	github.com/imroc/req v0.2.4
 	github.com/jinzhu/gorm v1.9.10
 	github.com/joho/godotenv v1.3.0
+	github.com/sirupsen/logrus v1.4.2
 	golang.org/x/mobile v0.0.0-20190719004257-d2bd2a29d028 // indirect
+	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )

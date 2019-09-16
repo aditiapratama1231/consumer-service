@@ -2,11 +2,11 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"os"
 	"time"
 
 	"github.com/joho/godotenv"
+	log "github.com/sirupsen/logrus"
 
 	"magento-consumer-service/config"
 	"magento-consumer-service/consumer"
@@ -25,13 +25,16 @@ func main() {
 		fmt.Print(e)
 	}
 
+	// Setup log
+	config.LogFormatter()
+
 	magentoBaseURL := os.Getenv("MAGENTO_BASE_URL")
 
 	// initiate request configuration
 	request := config.NewRequest(magentoBaseURL)
 	err := request.SetToken()
 	if err != nil {
-		log.Println("Error getting token : " + err.Error())
+		log.Info("Error getting token : " + err.Error())
 	}
 
 	db := config.DBInit()
@@ -53,17 +56,17 @@ func main() {
 
 	// Consumer service
 	go func() {
-		log.Println("ready to consume data")
+		log.Info("ready to consume data")
 		for {
 			// initial consumer configuration
 			consumer := consumer.NewConsumer(db, controller)
 			err := consumer.MainConsumer()
 			if err != nil {
-				log.Println("Error Get Consumer data", err)
+				log.Error("Error Get Consumer data", err)
 			}
 			time.Sleep(30000 * time.Millisecond)
 		}
 	}()
 
-	log.Fatalln(<-errChan)
+	log.Fatal(<-errChan)
 }

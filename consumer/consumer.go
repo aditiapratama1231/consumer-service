@@ -2,12 +2,13 @@ package consumer
 
 import (
 	"encoding/json"
-	"log"
+	// "log"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/kinesis"
 	"github.com/jinzhu/gorm"
+	log "github.com/sirupsen/logrus"
 
 	"magento-consumer-service/config"
 	"magento-consumer-service/controller"
@@ -68,12 +69,12 @@ func (cons *consumer) MainConsumer() error {
 			for _, record := range records.Records {
 				err := cons.DecodeRecord(record)
 				if err != nil {
-					log.Println(err)
+					log.Info(err)
 					continue
 				}
 			}
 		} else if records.NextShardIterator == a || shardIterator == records.NextShardIterator || err != nil {
-			log.Printf("GetRecords ERROR: %v\n", err)
+			log.Info("GetRecords ERROR: %v\n", err)
 			break
 		}
 		shardIterator = records.NextShardIterator
