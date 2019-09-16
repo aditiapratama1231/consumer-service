@@ -16,7 +16,7 @@ import (
 type Request interface {
 	Send(string, string, []byte) (*req.Resp, error)
 	Post(string, []byte) (*req.Resp, error)
-	Patch(string, []byte) (*req.Resp, error)
+	Put(string, []byte) (*req.Resp, error)
 	Delete(string) (*req.Resp, error)
 	GetToken() string
 	SetToken() error
@@ -85,8 +85,8 @@ func (r *request) Send(method string, url string, body []byte) (*req.Resp, error
 		return req.Get(r.BaseURL+url, header, bytes.NewBuffer(body))
 	case "POST":
 		return req.Post(r.BaseURL+url, tokenHeader, bytes.NewBuffer(body))
-	case "PATCH":
-		return req.Patch(r.BaseURL+url, tokenHeader, bytes.NewBuffer(body))
+	case "PUT":
+		return req.Put(r.BaseURL+url, tokenHeader, bytes.NewBuffer(body))
 	case "DELETE":
 		return req.Delete(r.BaseURL+url, tokenHeader)
 	}
@@ -97,8 +97,8 @@ func (r *request) Post(url string, body []byte) (*req.Resp, error) {
 	return r.Send("POST", url, body)
 }
 
-func (r *request) Patch(url string, body []byte) (*req.Resp, error) {
-	return r.Send("PATCH", url, body)
+func (r *request) Put(url string, body []byte) (*req.Resp, error) {
+	return r.Send("PUT", url, body)
 }
 
 func (r *request) Delete(url string) (*req.Resp, error) {
