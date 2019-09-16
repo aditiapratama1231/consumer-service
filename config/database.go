@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -33,6 +34,7 @@ func DBInit() *gorm.DB {
 	db.DB().SetMaxIdleConns(0)
 	db.DB().SetMaxOpenConns(5)
 
-	db.LogMode(true)
+	debug, _ := strconv.ParseBool(os.Getenv("GORM_DEBUG"))
+	db.LogMode(debug)
 	return db
 }
