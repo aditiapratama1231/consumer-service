@@ -20,20 +20,43 @@ func NewProductRepository(DB *gorm.DB) product.ProductRepository {
 
 func (p *productRepository) SyncProduct(data domain.ProductRecord) (interface{}, error) {
 	var product models.ProductRecord
+	tx := p.DB.Begin()
 
 	product.Type = data.Type
 	product.DashboardID = data.DashboardID
 	product.MagentoID = data.MagentoID
+	product.SKU = data.SKU
 
-	tx := p.DB.Begin()
+	if tx.Where("type = ?", data.Type).
+		Where("magento_id = ?", data.MagentoID).
+		Where("dashboard_id = ?", data.DashboardID).
+		Find(&product).RecordNotFound() {
 
-	err := tx.Create(&product).Error
+		err := tx.Create(&product).Error
+		if err != nil {
+			tx.Rollback()
+			return nil, err
+		}
+
+		tx.Commit()
+		return product, nil
+	}
+
+	err := tx.Save(&product).Error
 	if err != nil {
 		tx.Rollback()
 		return nil, err
 	}
 
 	tx.Commit()
+	return product, nil
+}
+
+func (p *productRepository) GetMagentoID(dashboardId int) (models.ProductRecord, error) {
+	var product models.ProductRecord
+
+	p.DB.Where("dashboard_id = ?", dashboardId).Find(&product)
+
 	return product, nil
 }
 

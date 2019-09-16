@@ -1,10 +1,10 @@
 package domain
 
 type ProductRecord struct {
-	Type           string
-	DashboardID    int
-	MagentoID      int
-	SequenceNumber string
+	Type        string
+	DashboardID int
+	MagentoID   int
+	SKU         string
 }
 
 type Product struct {

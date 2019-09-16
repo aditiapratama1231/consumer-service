@@ -1,0 +1,1 @@
+drop_column("product_records", "sku")
