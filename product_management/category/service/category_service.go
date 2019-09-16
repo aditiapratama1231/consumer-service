@@ -2,8 +2,8 @@ package service
 
 import (
 	"encoding/json"
-	"errors"
 	"log"
+	"strconv"
 
 	"github.com/jinzhu/gorm"
 
@@ -26,33 +26,34 @@ func NewCategoryService(db *gorm.DB, repository product.ProductRepository, reque
 	}
 }
 
+type MagentoResponse struct {
+	ID int `json:"id"`
+}
+
 func (c *categoryService) CreateCategory(consume *domain.Consume) error {
 	var (
-		dataResponse interface{}
-		categoryData domain.Category
+		magentoResponse MagentoResponse
 	)
 
 	// convert category payload
-	payload := consume.Data.Body.Payload["category"]
-	if payload != nil {
-		categoryData = convertCategory(payload)
-	} else {
-		return errors.New("wrong payload")
-	}
-
-	reqBody, err := json.Marshal(consume.Data)
+	payload := consume.Data.Body.Payload
+	reqBody, err := json.Marshal(payload)
 	if err != nil {
 		log.Println("Error Encoding category payload : " + err.Error())
 	}
 
 	// POST Data
-	req, err := c.Request.Post("/products", reqBody)
-	if err != nil {
-		log.Println("Error SetUp API call : " + err.Error())
+	req, err := c.Request.Post("/categories", reqBody)
+	resp := req.Response()
+
+	if err != nil || resp.StatusCode != 200 {
+		// if get error, show request details
+		log.Printf("%+v", req)
+		log.Println("Error SetUp API call : ", err)
+		return err
 	}
 
-	req.ToJSON(&dataResponse)
-	log.Println(dataResponse)
+	req.ToJSON(&magentoResponse)
 
 	// if POST success, safe data to db
 	_, err = c.Repository.SaveStream(*consume.SequenceNumber)
@@ -61,20 +62,95 @@ func (c *categoryService) CreateCategory(consume *domain.Consume) error {
 	}
 
 	// save to record
+	dashboardID, err := strconv.Atoi(consume.Data.Head.Dashboard)
 	_, err = c.Repository.SyncProduct(domain.ProductRecord{
 		Type:        "category",
-		MagentoID:   1,
-		DashboardID: categoryData.ID,
+		MagentoID:   magentoResponse.ID,
+		DashboardID: dashboardID,
 	})
 
 	return nil
 }
 
 func (c *categoryService) UpdateCategory(consume *domain.Consume) error {
+	var (
+		magentoResponse MagentoResponse
+	)
+
+	payload := consume.Data.Body.Payload
+	reqBody, err := json.Marshal(payload)
+	if err != nil {
+		log.Println("Error encoding product payload " + err.Error())
+		return err
+	}
+
+	dashboardID, err := strconv.Atoi(consume.Data.Head.Dashboard)
+	ctgry, err := c.Repository.GetMagentoID("category", dashboardID)
+	if err != nil {
+		log.Println("Error get magento id from database : " + err.Error())
+		return err
+	}
+
+	endpoint := "/categories/" + strconv.Itoa(ctgry.MagentoID)
+	req, err := c.Request.Put(endpoint, reqBody)
+	resp := req.Response()
+	if err != nil || resp.StatusCode != 200 {
+		// if get error, show request details
+		log.Printf("%+v", req)
+		return err
+	}
+
+	req.ToJSON(&magentoResponse)
+
+	_, err = c.Repository.SaveStream(*consume.SequenceNumber)
+	if err != nil {
+		log.Println("Error save stream to database : " + err.Error())
+		return err
+	}
+
+	_, err = c.Repository.SyncProduct(domain.ProductRecord{
+		Type:        "category",
+		MagentoID:   magentoResponse.ID,
+		DashboardID: dashboardID,
+	})
+
+	if err != nil {
+		log.Println("Error sync product to database : " + err.Error())
+		return err
+	}
+
 	return nil
 }
 
 func (c *categoryService) DeleteCategory(consume *domain.Consume) error {
+	var (
+		magentoResponse MagentoResponse
+	)
+
+	dashboardID, err := strconv.Atoi(consume.Data.Head.Dashboard)
+	ctgry, err := c.Repository.GetMagentoID("category", dashboardID)
+	if err != nil {
+		log.Println("Error get magento id from database : " + err.Error())
+		return err
+	}
+
+	endpoint := "/categories/" + strconv.Itoa(ctgry.MagentoID)
+	req, err := c.Request.Delete(endpoint)
+	resp := req.Response()
+	if err != nil || resp.StatusCode != 200 {
+		// if get error, show request details
+		log.Printf("%+v", req)
+		log.Println("Error SetUp API call : ", err)
+		return err
+	}
+
+	req.ToJSON(&magentoResponse)
+	_, err = c.Repository.SaveStream(*consume.SequenceNumber)
+	if err != nil {
+		log.Println("Error save stream to database : " + err.Error())
+		return err
+	}
+
 	return nil
 }
 

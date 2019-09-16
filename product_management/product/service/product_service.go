@@ -88,7 +88,7 @@ func (product *productService) UpdateProduct(consume *domain.Consume) error {
 	}
 
 	dashboardID, err := strconv.Atoi(consume.Data.Head.Dashboard)
-	prd, err := product.Repository.GetMagentoID(dashboardID)
+	prd, err := product.Repository.GetMagentoID("product", dashboardID)
 	if err != nil {
 		log.Println("Error get magento id from database : " + err.Error())
 		return err
@@ -132,7 +132,7 @@ func (product *productService) DeleteProduct(consume *domain.Consume) error {
 	)
 
 	dashboardID, err := strconv.Atoi(consume.Data.Head.Dashboard)
-	prd, err := product.Repository.GetMagentoID(dashboardID)
+	prd, err := product.Repository.GetMagentoID("product", dashboardID)
 	if err != nil {
 		log.Println("Error get magento id from database : " + err.Error())
 		return err

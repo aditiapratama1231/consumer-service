@@ -52,10 +52,12 @@ func (p *productRepository) SyncProduct(data domain.ProductRecord) (interface{},
 	return product, nil
 }
 
-func (p *productRepository) GetMagentoID(dashboardId int) (models.ProductRecord, error) {
+func (p *productRepository) GetMagentoID(tp string, dashboardId int) (models.ProductRecord, error) {
 	var product models.ProductRecord
 
-	p.DB.Where("dashboard_id = ?", dashboardId).Find(&product)
+	p.DB.Where("dashboard_id = ?", dashboardId).
+		Where("type = ?", tp).
+		First(&product)
 
 	return product, nil
 }
