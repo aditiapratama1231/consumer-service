@@ -42,10 +42,12 @@ func (product *productService) CreateProduct(consume *domain.Consume) error {
 	}
 
 	req, err := product.Request.Post("/products", reqBody)
-	if err != nil {
+	resp := req.Response()
+
+	if err != nil || resp.StatusCode != 200 {
 		// if get error, show request details
 		log.Printf("%+v", req)
-		log.Println("Error SetUp API call : ", err.Error())
+		log.Println("Error SetUp API call : ", err)
 		return err
 	}
 
@@ -94,7 +96,10 @@ func (product *productService) UpdateProduct(consume *domain.Consume) error {
 
 	endpoint := "/products/" + prd.SKU
 	req, err := product.Request.Put(endpoint, reqBody)
-	if err != nil {
+	resp := req.Response()
+
+	if err != nil || resp.StatusCode != 200 {
+		// if get error, show request details
 		log.Printf("%+v", req)
 		return err
 	}
@@ -135,9 +140,12 @@ func (product *productService) DeleteProduct(consume *domain.Consume) error {
 
 	endpoint := "/products/" + prd.SKU
 	req, err := product.Request.Delete(endpoint)
+	resp := req.Response()
 
-	if err != nil {
+	if err != nil || resp.StatusCode != 200 {
+		// if get error, show request details
 		log.Printf("%+v", req)
+		log.Println("Error SetUp API call : ", err)
 		return err
 	}
 

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strconv"
 
 	"magento-consumer-service/domain"
 
@@ -69,6 +70,10 @@ func (r request) GetToken() string {
 }
 
 func (r *request) Send(method string, url string, body []byte) (*req.Resp, error) {
+	debug, _ := strconv.ParseBool(os.Getenv("REQUEST_DEBUG"))
+
+	req.Debug = debug
+
 	header := req.Header{
 		"Content-Type": "application/json",
 	}
