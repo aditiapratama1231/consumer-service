@@ -39,11 +39,13 @@ func (product *productService) CreateProduct(consume *domain.Consume) error {
 
 	req, err := product.Request.Post("/products", reqBody)
 	if err != nil {
+		// if get error, show request details
+		log.Printf("%+v", req)
 		log.Println("Error SetUp API call : ", err.Error())
+		return err
 	}
 
 	req.ToJSON(&dataResponse)
-	log.Println(dataResponse)
 
 	_, err = product.Repository.SaveStream(*consume.SequenceNumber)
 	if err != nil {
