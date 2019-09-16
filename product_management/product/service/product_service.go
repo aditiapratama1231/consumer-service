@@ -135,7 +135,7 @@ func (product *productService) DeleteProduct(consume *domain.Consume) error {
 
 	endpoint := "/products/" + prd.SKU
 	req, err := product.Request.Delete(endpoint)
-	log.Printf("%+v", req)
+
 	if err != nil {
 		log.Printf("%+v", req)
 		return err
