@@ -86,7 +86,7 @@ func (r *request) Send(method string, url string, body []byte) (*req.Resp, error
 	case "POST":
 		return req.Post(r.BaseURL+url, tokenHeader, bytes.NewBuffer(body))
 	case "PATCH":
-		return req.Patch(r.BaseURL+url, tokenHeader, bytes.NewBuffer(body)
+		return req.Patch(r.BaseURL+url, tokenHeader, bytes.NewBuffer(body))
 	case "DELETE":
 		return req.Delete(r.BaseURL+url, tokenHeader)
 	}
