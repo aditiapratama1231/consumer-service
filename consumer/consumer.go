@@ -33,7 +33,7 @@ func NewConsumer(db *gorm.DB, ctrl controller.Controller) Consumer {
 
 // Consumer function to consume data from kinesis
 func (cons *consumer) MainConsumer() error {
-	ac := config.AWSConnectKinesis()
+	ac := config.Kinesis()
 	kc := kinesis.New(ac.Session)
 	streamName := aws.String(ac.StreamName)
 	streams, err := kc.DescribeStream(&kinesis.DescribeStreamInput{StreamName: streamName})

@@ -10,8 +10,8 @@ import (
 	"magento-consumer-service/domain"
 )
 
-// AWSConnectKinesis function, used for connecting to aws-kinesis stream
-func AWSConnectKinesis() domain.KinesisStream {
+// Kinesis function, used for connecting to aws-kinesis stream
+func Kinesis() domain.KinesisStream {
 	var ac domain.KinesisStream
 	stream := os.Getenv("AWS_KINESIS_STREAM_NAME")
 	region := os.Getenv("AWS_KINESIS_REGION")
