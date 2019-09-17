@@ -3,9 +3,10 @@ package service
 import (
 	"encoding/json"
 	"errors"
-	"log"
+	clog "log"
 
 	"github.com/jinzhu/gorm"
+	log "github.com/sirupsen/logrus"
 
 	"magento-consumer-service/config"
 	"magento-consumer-service/domain"
@@ -44,18 +45,18 @@ func (brand *brandService) CreateBrand(consume *domain.Consume) error {
 	// POST data
 	reqBody, err := json.Marshal(consume.Data)
 	if err != nil {
-		log.Println("Error Encoding brand payload : " + err.Error())
+		log.Error("Error Encoding brand payload : " + err.Error())
 		return err
 	}
 
 	req, err := brand.Request.Post("/products", reqBody)
 	if err != nil {
-		log.Println("Error SetUp API call : " + err.Error())
+		clog.Printf("%+v", req) // force to show request details in command line.
+		log.Error("Error SetUp API call : " + err.Error())
 		return err
 	}
 
 	req.ToJSON(&dataResponse)
-	log.Println(dataResponse)
 
 	// if POST success, safe data to db
 	_, err = brand.Repository.SaveStream(*consume.SequenceNumber)
@@ -78,15 +79,15 @@ func (brand *brandService) CreateBrand(consume *domain.Consume) error {
 
 // UpdateBrand /
 func (brand *brandService) UpdateBrand(domain *domain.Consume) error {
-	log.Println("update")
-	// log.Println(*consume.SequenceNumber)
+	log.Error("update")
+	// log.Error(*consume.SequenceNumber)
 	return nil
 }
 
 // DeleteBrand /
 func (brand *brandService) DeleteBrand(domain *domain.Consume) error {
-	log.Println("delete")
-	// log.Println(*consume.SequenceNumber)
+	log.Error("delete")
+	// log.Error(*consume.SequenceNumber)
 	return nil
 }
 

@@ -2,10 +2,11 @@ package service
 
 import (
 	"encoding/json"
-	"log"
+	clog "log"
 	"strconv"
 
 	"github.com/jinzhu/gorm"
+	log "github.com/sirupsen/logrus"
 
 	"magento-consumer-service/config"
 	"magento-consumer-service/domain"
@@ -38,7 +39,7 @@ func (product *productService) CreateProduct(consume *domain.Consume) error {
 	payload := consume.Data.Body.Payload
 	reqBody, err := json.Marshal(payload)
 	if err != nil {
-		log.Println("Error encoding product payload " + err.Error())
+		log.Error("Error encoding product payload " + err.Error())
 	}
 
 	req, err := product.Request.Post("/products", reqBody)
@@ -46,8 +47,9 @@ func (product *productService) CreateProduct(consume *domain.Consume) error {
 
 	if err != nil || resp.StatusCode != 200 {
 		// if get error, show request details
-		log.Printf("%+v", req)
-		log.Println("Error SetUp API call : ", err)
+		clog.Printf("%+v", req) // force to show request details in command line.
+		log.Errorf("%+v", req)
+		log.Error("Error SetUp API call : ", err)
 		return err
 	}
 
@@ -68,9 +70,17 @@ func (product *productService) CreateProduct(consume *domain.Consume) error {
 	})
 
 	if err != nil {
-		log.Println("Error sync product to database : " + err.Error())
+		log.Error("Error sync product to database : " + err.Error())
 		return err
 	}
+
+	log.WithFields(log.Fields{
+		"request_info": req,
+	}).Info("Request information detail")
+
+	log.WithFields(log.Fields{
+		"response_info": resp,
+	}).Info("Response information detail")
 
 	return nil
 }
@@ -83,14 +93,14 @@ func (product *productService) UpdateProduct(consume *domain.Consume) error {
 	payload := consume.Data.Body.Payload
 	reqBody, err := json.Marshal(payload)
 	if err != nil {
-		log.Println("Error encoding product payload " + err.Error())
+		log.Error("Error encoding product payload " + err.Error())
 		return err
 	}
 
 	dashboardID, err := strconv.Atoi(consume.Data.Head.Dashboard)
 	prd, err := product.Repository.GetMagentoID("product", dashboardID)
 	if err != nil {
-		log.Println("Error get magento id from database : " + err.Error())
+		log.Error("Error get magento id from database : " + err.Error())
 		return err
 	}
 
@@ -100,6 +110,7 @@ func (product *productService) UpdateProduct(consume *domain.Consume) error {
 
 	if err != nil || resp.StatusCode != 200 {
 		// if get error, show request details
+		clog.Printf("%+v", req) // force to show request details in command line.
 		log.Printf("%+v", req)
 		return err
 	}
@@ -107,7 +118,7 @@ func (product *productService) UpdateProduct(consume *domain.Consume) error {
 	req.ToJSON(&magentoResponse)
 	_, err = product.Repository.SaveStream(*consume.SequenceNumber)
 	if err != nil {
-		log.Println("Error save stream to database : " + err.Error())
+		log.Error("Error save stream to database : " + err.Error())
 		return err
 	}
 
@@ -119,7 +130,7 @@ func (product *productService) UpdateProduct(consume *domain.Consume) error {
 	})
 
 	if err != nil {
-		log.Println("Error sync product to database : " + err.Error())
+		log.Error("Error sync product to database : " + err.Error())
 		return err
 	}
 
@@ -134,7 +145,7 @@ func (product *productService) DeleteProduct(consume *domain.Consume) error {
 	dashboardID, err := strconv.Atoi(consume.Data.Head.Dashboard)
 	prd, err := product.Repository.GetMagentoID("product", dashboardID)
 	if err != nil {
-		log.Println("Error get magento id from database : " + err.Error())
+		log.Error("Error get magento id from database : " + err.Error())
 		return err
 	}
 
@@ -144,15 +155,16 @@ func (product *productService) DeleteProduct(consume *domain.Consume) error {
 
 	if err != nil || resp.StatusCode != 200 {
 		// if get error, show request details
+		clog.Printf("%+v", req) // force to show request details in command line.
 		log.Printf("%+v", req)
-		log.Println("Error SetUp API call : ", err)
+		log.Error("Error SetUp API call : ", err)
 		return err
 	}
 
 	req.ToJSON(&magentoResponse)
 	_, err = product.Repository.SaveStream(*consume.SequenceNumber)
 	if err != nil {
-		log.Println("Error save stream to database : " + err.Error())
+		log.Error("Error save stream to database : " + err.Error())
 		return err
 	}
 
@@ -161,7 +173,6 @@ func (product *productService) DeleteProduct(consume *domain.Consume) error {
 
 func convertProductRecord(data interface{}) domain.ProductRecord {
 	m := data.(map[string]interface{})
-	log.Println(m["sku"])
 	product := domain.ProductRecord{}
 	if sku, ok := m["sku"].(string); ok {
 		product.SKU = sku

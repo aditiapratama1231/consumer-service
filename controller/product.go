@@ -1,8 +1,9 @@
 package controller
 
 import (
-	"log"
 	"magento-consumer-service/domain"
+
+	log "github.com/sirupsen/logrus"
 )
 
 func (c *controller) ProductManagement(consume *domain.Consume) {
@@ -12,20 +13,20 @@ func (c *controller) ProductManagement(consume *domain.Consume) {
 		case "create":
 			err := c.ProductService.CreateProduct(consume)
 			if err != nil {
-				log.Println("DISINI ", err)
+				log.Error(err)
 			}
 		case "update":
 			err := c.ProductService.UpdateProduct(consume)
 			if err != nil {
-				log.Println(err)
+				log.Error(err)
 			}
 		case "delete":
 			err := c.ProductService.DeleteProduct(consume)
 			if err != nil {
-				log.Println(err)
+				log.Error(err)
 			}
 		default:
-			log.Println("wrong action input")
+			log.Fatal("wrong action input")
 		}
 
 	case "category":
@@ -33,17 +34,17 @@ func (c *controller) ProductManagement(consume *domain.Consume) {
 		case "create":
 			err := c.CategoryService.CreateCategory(consume)
 			if err != nil {
-				log.Println(err)
+				log.Error(err)
 			}
 		case "update":
 			err := c.CategoryService.UpdateCategory(consume)
 			if err != nil {
-				log.Println(err)
+				log.Error(err)
 			}
 		case "delete":
 			err := c.CategoryService.DeleteCategory(consume)
 			if err != nil {
-				log.Println(err)
+				log.Error(err)
 			}
 		default:
 			log.Println("wrong action input")
@@ -54,22 +55,22 @@ func (c *controller) ProductManagement(consume *domain.Consume) {
 		case "create":
 			err := c.BrandService.CreateBrand(consume)
 			if err != nil {
-				log.Println(err)
+				log.Error(err)
 			}
 		case "update":
 			err := c.BrandService.UpdateBrand(consume)
 			if err != nil {
-				log.Println(err)
+				log.Error(err)
 			}
 		case "delete":
 			err := c.BrandService.DeleteBrand(consume)
 			if err != nil {
-				log.Println(err)
+				log.Error(err)
 			}
 		default:
-			log.Println("wrong action input")
+			log.Fatal("wrong action input")
 		}
 	default:
-		log.Println("wrong domain input")
+		log.Fatal("wrong domain input")
 	}
 }

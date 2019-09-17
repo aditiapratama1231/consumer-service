@@ -1,11 +1,12 @@
 package controller
 
 import (
-	"log"
-	_customerService "magento-consumer-service/customer_management/customer/service"
 	"magento-consumer-service/database/models"
 	"magento-consumer-service/domain"
 
+	log "github.com/sirupsen/logrus"
+
+	_customerService "magento-consumer-service/customer_management/customer/service"
 	_brandService "magento-consumer-service/product_management/brand/service"
 	_categoryService "magento-consumer-service/product_management/category/service"
 	_productService "magento-consumer-service/product_management/product/service"
@@ -62,7 +63,7 @@ func (c *controller) MainController(consume *domain.Consume) {
 		case "merchant":
 			c.CustomerManagement(consume)
 		default:
-			log.Println("wrong service input")
+			log.Fatal("wrong service input")
 		}
 	}
 }
