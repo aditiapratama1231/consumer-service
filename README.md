@@ -13,6 +13,7 @@
 
 ## Debugging
 - Please to update `REQUEST_DEBUG` to true, to debug request traffic
+- If you want to log all information to File, please to update `IS_LOG_FILE` to true.
 
 ## Database
 - `soda g config` to create `database.yml` configuration
