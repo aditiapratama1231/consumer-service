@@ -83,9 +83,16 @@ func (c *customerRepository) SaveStream(sequenceNumber string) (interface{}, err
 
 func (c *customerRepository) DeleteRecord(tp string, dashboardID int) error {
 	var customer models.CustomerRecord
+	tx := c.DB.Begin()
 
-	c.DB.Where("dashboard_id = ?", dashboardID).
+	err := tx.Where("dashboard_id = ?", dashboardID).
 		Where("type = ?", tp).
-		First(&customer).Delete(&customer)
+		First(&customer).Delete(&customer).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	tx.Commit()
 	return nil
 }
