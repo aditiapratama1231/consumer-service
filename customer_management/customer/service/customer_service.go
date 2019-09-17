@@ -127,7 +127,37 @@ func (c *customerService) UpdateCustomer(consume *domain.Consume) error {
 
 }
 
-func (customer *customerService) DeleteCustomer(consume *domain.Consume) error {
+func (c *customerService) DeleteCustomer(consume *domain.Consume) error {
+
+	dashboardID, err := strconv.Atoi(consume.Data.Head.Dashboard)
+	ctgry, err := c.Repository.GetMagentoID("customer", dashboardID)
+	if err != nil {
+		log.Println("Error get magento id from database : " + err.Error())
+		return err
+	}
+
+	endpoint := "/customers/" + strconv.Itoa(ctgry.MagentoID)
+	req, err := c.Request.Delete(endpoint)
+	resp := req.Response()
+	if err != nil || resp.StatusCode != 200 {
+		// if get error, show request details
+		log.Printf("%+v", req)
+		log.Println("Error SetUp API call : ", err)
+		return err
+	}
+
+	_, err = c.Repository.SaveStream(*consume.SequenceNumber)
+	if err != nil {
+		log.Println("Error save stream to database : " + err.Error())
+		return err
+	}
+
+	err = c.Repository.DeleteRecord("customer", dashboardID)
+	if err != nil {
+		log.Println("Error delete record in database: " + err.Error())
+		return err
+	}
 
 	return nil
+
 }

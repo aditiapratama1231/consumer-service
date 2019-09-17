@@ -11,4 +11,5 @@ type CustomerRepository interface {
 	ShowCustomerID(domain.CustomerRecord) (interface{}, error)
 	GetMagentoID(string, int) (models.CustomerRecord, error)
 	SaveStream(string) (interface{}, error)
+	DeleteRecord(string, int) error
 }

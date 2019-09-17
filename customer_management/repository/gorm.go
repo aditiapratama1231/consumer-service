@@ -54,7 +54,6 @@ func (c *customerRepository) GetMagentoID(tp string, dashboardID int) (models.Cu
 	c.DB.Where("dashboard_id = ?", dashboardID).
 		Where("type = ?", tp).
 		First(&customer)
-
 	return customer, nil
 }
 
@@ -80,4 +79,13 @@ func (c *customerRepository) SaveStream(sequenceNumber string) (interface{}, err
 	}
 	tx.Commit()
 	return kinesis, nil
+}
+
+func (c *customerRepository) DeleteRecord(tp string, dashboardID int) error {
+	var customer models.CustomerRecord
+
+	c.DB.Where("dashboard_id = ?", dashboardID).
+		Where("type = ?", tp).
+		First(&customer).Delete(&customer)
+	return nil
 }
