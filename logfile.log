@@ -45,4 +45,17 @@
 {"level":"info","msg":"ready to consume data","time":"2019-09-17T15:47:26+07:00"}
 {"level":"info","msg":"json: cannot unmarshal number into Go struct field .Dashboard of type string","time":"2019-09-17T15:47:26+07:00"}
 {"level":"info","msg":"json: cannot unmarshal number into Go struct field .Dashboard of type string","time":"2019-09-17T15:47:26+07:00"}
+<<<<<<< Updated upstream
 {"level":"info","msg":"ready to consume data","time":"2019-09-17T16:28:15+07:00"}
+=======
+{"level":"info","msg":"ready to consume data","time":"2019-09-17T16:31:43+07:00"}
+{"level":"info","msg":"ready to consume data","time":"2019-09-17T17:09:10+07:00"}
+{"level":"info","msg":"ready to consume data","time":"2019-09-17T17:17:26+07:00"}
+{"level":"error","msg":"Error Get Consumer dataRequestError: send request failed\ncaused by: Post http://localhost:4568/: read tcp 127.0.0.1:56926-\u003e127.0.0.1:4568: read: connection reset by peer","time":"2019-09-17T17:17:26+07:00"}
+{"level":"error","msg":"Error Get Consumer dataRequestError: send request failed\ncaused by: Post http://localhost:4568/: read tcp 127.0.0.1:57060-\u003e127.0.0.1:4568: read: connection reset by peer","time":"2019-09-17T17:17:56+07:00"}
+{"level":"error","msg":"Error Get Consumer dataResourceNotFoundException: Stream mystream under account 000000000000 not found.\n\tstatus code: 400, request id: 7d30fcc0-d934-11e9-a8f0-91c70c629ce6","time":"2019-09-17T17:18:27+07:00"}
+{"level":"error","msg":"Error Get Consumer dataResourceNotFoundException: Stream mystream under account 000000000000 not found.\n\tstatus code: 400, request id: 8f20f7a0-d934-11e9-a8f0-91c70c629ce6","time":"2019-09-17T17:18:57+07:00"}
+{"level":"error","msg":"Error Get Consumer dataResourceNotFoundException: Stream mystream under account 000000000000 not found.\n\tstatus code: 400, request id: a107cac0-d934-11e9-a8f0-91c70c629ce6","time":"2019-09-17T17:19:27+07:00"}
+{"level":"error","msg":"Error Get Consumer dataResourceNotFoundException: Stream mystream under account 000000000000 not found.\n\tstatus code: 400, request id: b2ecf030-d934-11e9-a8f0-91c70c629ce6","time":"2019-09-17T17:19:57+07:00"}
+{"level":"error","msg":"Error Get Consumer dataResourceNotFoundException: Stream mystream under account 000000000000 not found.\n\tstatus code: 400, request id: c4f973c0-d934-11e9-a8f0-91c70c629ce6","time":"2019-09-17T17:20:27+07:00"}
+>>>>>>> Stashed changes
