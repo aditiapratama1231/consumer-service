@@ -2,6 +2,7 @@ package controller
 
 import (
 	"log"
+	_customerService "magento-consumer-service/customer_management/customer/service"
 	"magento-consumer-service/database/models"
 	"magento-consumer-service/domain"
 
@@ -18,24 +19,29 @@ type controller struct {
 	CategoryService _categoryService.CategoryService
 	BrandService    _brandService.BrandService
 	ProductService  _productService.ProductService
+	CustomerService _customerService.CustomerService
 }
 
+//Controller /
 type Controller interface {
 	MainController(*domain.Consume)
 	ProductManagement(*domain.Consume)
 	OrderManagement(*domain.Consume)
+	CustomerManagement(*domain.Consume)
 }
 
 func NewController(db *gorm.DB,
 	categorySrv _categoryService.CategoryService,
 	brandSrv _brandService.BrandService,
 	productSrv _productService.ProductService,
+	customerSrv _customerService.CustomerService,
 ) Controller {
 	return &controller{
 		DB:              db,
 		CategoryService: categorySrv,
 		BrandService:    brandSrv,
 		ProductService:  productSrv,
+		CustomerService: customerSrv,
 	}
 }
 
@@ -53,6 +59,8 @@ func (c *controller) MainController(consume *domain.Consume) {
 			c.ProductManagement(consume)
 		case "order":
 			c.OrderManagement(consume)
+		case "merchant":
+			c.CustomerManagement(consume)
 		default:
 			log.Println("wrong service input")
 		}
