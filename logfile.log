@@ -45,3 +45,4 @@
 {"level":"info","msg":"ready to consume data","time":"2019-09-17T15:47:26+07:00"}
 {"level":"info","msg":"json: cannot unmarshal number into Go struct field .Dashboard of type string","time":"2019-09-17T15:47:26+07:00"}
 {"level":"info","msg":"json: cannot unmarshal number into Go struct field .Dashboard of type string","time":"2019-09-17T15:47:26+07:00"}
+{"level":"info","msg":"ready to consume data","time":"2019-09-17T16:28:15+07:00"}

@@ -42,14 +42,16 @@ func main() {
 	db := config.DBInit()
 
 	// initiate instance
+	// initiate repository
 	productRepository := _productRepository.NewProductRepository(db)
-
-	productService := _productService.NewProductService(db, productRepository, request)
-	//TODO: create customer repository
 	customerRepository := _customerRepository.NewCustomerRepository(db)
+
+	// product management entity
+	productService := _productService.NewProductService(db, productRepository, request)
 	categoryService := _categoryService.NewCategoryService(db, productRepository, request)
 	brandService := _brandService.NewBrandService(db, productRepository, request)
-	//TODO: create customer service
+
+	// customer entity
 	customerService := _customerService.NewCustomerService(db, customerRepository, request)
 
 	// initiate controller
