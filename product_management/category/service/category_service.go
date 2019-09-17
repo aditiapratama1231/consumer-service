@@ -71,6 +71,7 @@ func (c *categoryService) CreateCategory(consume *domain.Consume) error {
 		DashboardID: dashboardID,
 	})
 
+	config.SetAPILogger(req, resp)
 	return nil
 }
 
@@ -122,6 +123,7 @@ func (c *categoryService) UpdateCategory(consume *domain.Consume) error {
 		return err
 	}
 
+	config.SetAPILogger(req, resp)
 	return nil
 }
 
@@ -155,6 +157,7 @@ func (c *categoryService) DeleteCategory(consume *domain.Consume) error {
 		return err
 	}
 
+	config.SetAPILogger(req, resp)
 	return nil
 }
 

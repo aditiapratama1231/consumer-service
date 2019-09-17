@@ -74,14 +74,7 @@ func (product *productService) CreateProduct(consume *domain.Consume) error {
 		return err
 	}
 
-	log.WithFields(log.Fields{
-		"request_info": req,
-	}).Info("Request information detail")
-
-	log.WithFields(log.Fields{
-		"response_info": resp,
-	}).Info("Response information detail")
-
+	config.SetAPILogger(req, resp)
 	return nil
 }
 
@@ -134,6 +127,7 @@ func (product *productService) UpdateProduct(consume *domain.Consume) error {
 		return err
 	}
 
+	config.SetAPILogger(req, resp)
 	return nil
 }
 
@@ -168,6 +162,7 @@ func (product *productService) DeleteProduct(consume *domain.Consume) error {
 		return err
 	}
 
+	config.SetAPILogger(req, resp)
 	return nil
 }
 

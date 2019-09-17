@@ -2,9 +2,11 @@ package config
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"strconv"
 
+	"github.com/imroc/req"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/natefinch/lumberjack.v2"
 )
@@ -27,4 +29,14 @@ func LogFormatter() {
 			MaxAge:     28,
 		})
 	}
+}
+
+func SetAPILogger(req *req.Resp, resp *http.Response) {
+	log.WithFields(log.Fields{
+		"request_info": req,
+	}).Info("Request information detail")
+
+	log.WithFields(log.Fields{
+		"response_info": resp,
+	}).Info("Response information detail")
 }

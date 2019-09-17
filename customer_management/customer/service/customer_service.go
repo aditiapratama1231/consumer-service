@@ -72,8 +72,8 @@ func (c *customerService) CreateCustomer(consume *domain.Consume) error {
 		DashboardID: dashboardID,
 	})
 
+	config.SetAPILogger(req, resp)
 	return nil
-
 }
 
 //UpdateCustomer /
@@ -123,8 +123,8 @@ func (c *customerService) UpdateCustomer(consume *domain.Consume) error {
 		return err
 	}
 
+	config.SetAPILogger(req, resp)
 	return nil
-
 }
 
 func (c *customerService) DeleteCustomer(consume *domain.Consume) error {
@@ -158,6 +158,6 @@ func (c *customerService) DeleteCustomer(consume *domain.Consume) error {
 		return err
 	}
 
+	config.SetAPILogger(req, resp)
 	return nil
-
 }
