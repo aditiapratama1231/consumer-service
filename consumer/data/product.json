@@ -13,8 +13,19 @@
                 "sku": "PP-SKU",
                 "status": 1,
                 "visibility": 4,
-                "type_id": "configurable",
-                "attribute_set_id": 9, //default is 9, so keep it like this
+                "type_id": "simple",
+                "attribute_set_id": 9,
+                "price": "12000",
+                "weight": "12.2",
+                "extension_attributes": {
+                    "stock_item": {
+                        "qty": "12",
+                        "min_qty": "1231",
+                        "min_sale_qty": "5",
+                        "max_sale_qty": "100",
+                        "is_in_stock": true
+                    }
+                },
                 "custom_attributes": [
                     {
                         "attribute_code": "description",
