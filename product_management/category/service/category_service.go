@@ -156,7 +156,11 @@ func (c *categoryService) DeleteCategory(consume *domain.Consume) error {
 		log.Error("Error save stream to database : " + err.Error())
 		return err
 	}
-
+	err = c.Repository.DeleteRecord(consume.Data.Head.Domain, dashboardID)
+	if err != nil {
+		log.Println("Error delete record in database: " + err.Error())
+		return err
+	}
 	config.SetAPILogger(req, resp)
 	return nil
 }

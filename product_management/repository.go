@@ -10,4 +10,5 @@ type ProductRepository interface {
 	ShowProductID(domain.ProductRecord) (interface{}, error)
 	GetMagentoID(string, int) (models.ProductRecord, error)
 	SaveStream(string) (interface{}, error)
+	DeleteRecord(string, int) error
 }

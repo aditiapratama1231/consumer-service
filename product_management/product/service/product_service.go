@@ -162,6 +162,12 @@ func (product *productService) DeleteProduct(consume *domain.Consume) error {
 		return err
 	}
 
+	err = product.Repository.DeleteRecord(consume.Data.Head.Domain, dashboardID)
+	if err != nil {
+		log.Println("Error delete record in database: " + err.Error())
+		return err
+	}
+
 	config.SetAPILogger(req, resp)
 	return nil
 }
