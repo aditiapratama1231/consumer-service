@@ -2,7 +2,6 @@
     "head": {
         "service": "product",
         "domain": "product",
-        "action_type": 1,
         "action": "create",
         "dashboard": "11"
     },
