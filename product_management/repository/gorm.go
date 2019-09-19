@@ -86,3 +86,20 @@ func (p *productRepository) SaveStream(sequenceNumber string) (interface{}, erro
 	tx.Commit()
 	return kinesis, nil
 }
+
+func (p *productRepository)DeleteRecord(tp string, dashboardID int) error {
+	var product models.ProductRecord
+	tx := p.DB.Begin()
+
+	err := tx.Where("dashboard_id=?", dashboardID).
+		Where("type = ?", tp).
+		First(&product).Delete(&product).Error
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	tx.Commit()
+	return nil
+
+}
