@@ -15,11 +15,11 @@ type Consume struct {
 	SequenceNumber *string
 	Data           struct {
 		Head struct {
-			Service    string
-			Domain     string
-			ActionType uint16
-			Action     string
-			Dashboard  string
+			Service     string
+			Domain      string
+			ActionType  uint16
+			Action      string
+			DashboardID string `json:"dashboard_id"`
 		}
 		Body struct {
 			Payload map[string]interface{}

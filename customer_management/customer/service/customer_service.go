@@ -65,7 +65,7 @@ func (c *customerService) CreateCustomer(consume *domain.Consume) error {
 	}
 
 	// save to record
-	dashboardID, err := strconv.Atoi(consume.Data.Head.Dashboard)
+	dashboardID, err := strconv.Atoi(consume.Data.Head.DashboardID)
 	_, err = c.Repository.SyncCustomer(domain.CustomerRecord{
 		Type:        "customer",
 		MagentoID:   magentoResponse.ID,
@@ -87,7 +87,7 @@ func (c *customerService) UpdateCustomer(consume *domain.Consume) error {
 		return err
 	}
 
-	dashboardID, err := strconv.Atoi(consume.Data.Head.Dashboard)
+	dashboardID, err := strconv.Atoi(consume.Data.Head.DashboardID)
 	ctgry, err := c.Repository.GetMagentoID("customer", dashboardID)
 	if err != nil {
 		log.Error("Error get magento id from database : " + err.Error())
@@ -129,7 +129,7 @@ func (c *customerService) UpdateCustomer(consume *domain.Consume) error {
 
 func (c *customerService) DeleteCustomer(consume *domain.Consume) error {
 
-	dashboardID, err := strconv.Atoi(consume.Data.Head.Dashboard)
+	dashboardID, err := strconv.Atoi(consume.Data.Head.DashboardID)
 	ctgry, err := c.Repository.GetMagentoID("customer", dashboardID)
 	if err != nil {
 		log.Println("Error get magento id from database : " + err.Error())

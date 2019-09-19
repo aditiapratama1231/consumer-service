@@ -3,7 +3,7 @@
         "service": "product",
         "domain": "category",
         "action": "create",
-        "dashboard": "1"
+        "dashboard_id": "1"
     },
     "body": {
         "payload": {

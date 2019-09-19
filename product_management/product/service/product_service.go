@@ -35,7 +35,6 @@ func (product *productService) CreateProduct(consume *domain.Consume) error {
 	var (
 		magentoResponse MagentoResponse
 	)
-
 	payload := consume.Data.Body.Payload
 	reqBody, err := json.Marshal(payload)
 	if err != nil {
@@ -61,7 +60,7 @@ func (product *productService) CreateProduct(consume *domain.Consume) error {
 	}
 
 	productPayload := convertProductRecord(payload["product"])
-	dashboardID, err := strconv.Atoi(consume.Data.Head.Dashboard)
+	dashboardID, err := strconv.Atoi(consume.Data.Head.DashboardID)
 	_, err = product.Repository.SyncProduct(domain.ProductRecord{
 		Type:        "product",
 		MagentoID:   magentoResponse.ID,
@@ -90,7 +89,7 @@ func (product *productService) UpdateProduct(consume *domain.Consume) error {
 		return err
 	}
 
-	dashboardID, err := strconv.Atoi(consume.Data.Head.Dashboard)
+	dashboardID, err := strconv.Atoi(consume.Data.Head.DashboardID)
 	prd, err := product.Repository.GetMagentoID("product", dashboardID)
 	if err != nil {
 		log.Error("Error get magento id from database : " + err.Error())
@@ -136,7 +135,7 @@ func (product *productService) DeleteProduct(consume *domain.Consume) error {
 		magentoResponse MagentoResponse
 	)
 
-	dashboardID, err := strconv.Atoi(consume.Data.Head.Dashboard)
+	dashboardID, err := strconv.Atoi(consume.Data.Head.DashboardID)
 	prd, err := product.Repository.GetMagentoID("product", dashboardID)
 	if err != nil {
 		log.Error("Error get magento id from database : " + err.Error())

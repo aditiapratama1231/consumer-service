@@ -64,7 +64,7 @@ func (c *categoryService) CreateCategory(consume *domain.Consume) error {
 	}
 
 	// save to record
-	dashboardID, err := strconv.Atoi(consume.Data.Head.Dashboard)
+	dashboardID, err := strconv.Atoi(consume.Data.Head.DashboardID)
 	_, err = c.Repository.SyncProduct(domain.ProductRecord{
 		Type:        "category",
 		MagentoID:   magentoResponse.ID,
@@ -87,7 +87,7 @@ func (c *categoryService) UpdateCategory(consume *domain.Consume) error {
 		return err
 	}
 
-	dashboardID, err := strconv.Atoi(consume.Data.Head.Dashboard)
+	dashboardID, err := strconv.Atoi(consume.Data.Head.DashboardID)
 	ctgry, err := c.Repository.GetMagentoID("category", dashboardID)
 	if err != nil {
 		log.Error("Error get magento id from database : " + err.Error())
@@ -132,7 +132,7 @@ func (c *categoryService) DeleteCategory(consume *domain.Consume) error {
 		magentoResponse MagentoResponse
 	)
 
-	dashboardID, err := strconv.Atoi(consume.Data.Head.Dashboard)
+	dashboardID, err := strconv.Atoi(consume.Data.Head.DashboardID)
 	ctgry, err := c.Repository.GetMagentoID("category", dashboardID)
 	if err != nil {
 		log.Error("Error get magento id from database : " + err.Error())
