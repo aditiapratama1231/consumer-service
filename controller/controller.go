@@ -7,6 +7,7 @@ import (
 	log "github.com/sirupsen/logrus"
 
 	_customerService "magento-consumer-service/customer_management/customer/service"
+	_orderService "magento-consumer-service/order_management/order/service"
 	_brandService "magento-consumer-service/product_management/brand/service"
 	_categoryService "magento-consumer-service/product_management/category/service"
 	_productService "magento-consumer-service/product_management/product/service"
@@ -21,6 +22,7 @@ type controller struct {
 	BrandService    _brandService.BrandService
 	ProductService  _productService.ProductService
 	CustomerService _customerService.CustomerService
+	OrderService    _orderService.OrderService
 }
 
 //Controller /
@@ -36,6 +38,7 @@ func NewController(db *gorm.DB,
 	brandSrv _brandService.BrandService,
 	productSrv _productService.ProductService,
 	customerSrv _customerService.CustomerService,
+	orderSrv _orderService.OrderService,
 ) Controller {
 	return &controller{
 		DB:              db,
@@ -43,6 +46,7 @@ func NewController(db *gorm.DB,
 		BrandService:    brandSrv,
 		ProductService:  productSrv,
 		CustomerService: customerSrv,
+		OrderService:    orderSrv,
 	}
 }
 

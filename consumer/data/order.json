@@ -1,0 +1,17 @@
+{
+    "head": {
+        "service": "product",
+        "domain": "category",
+        "action": "create",
+        "dashboard_id": "1"
+    },
+    "body": {
+        "payload": {
+            "entity": {
+                "entity_id": 1837,
+                "status": "processing",
+                "increment_id": "000001839"
+            }
+        }
+    }
+}
