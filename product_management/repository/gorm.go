@@ -87,7 +87,7 @@ func (p *productRepository) SaveStream(sequenceNumber string) (interface{}, erro
 	return kinesis, nil
 }
 
-func (p *productRepository)DeleteRecord(tp string, dashboardID int) error {
+func (p *productRepository) DeleteRecord(tp string, dashboardID int) error {
 	var product models.ProductRecord
 	tx := p.DB.Begin()
 
