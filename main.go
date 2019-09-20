@@ -50,13 +50,13 @@ func main() {
 	orderRepository := _orderRepository.NewOrderRepository(db)
 
 	// product management entity
-	productService := _productService.NewProductService(db, productRepository, request)
-	categoryService := _categoryService.NewCategoryService(db, productRepository, request)
-	brandService := _brandService.NewBrandService(db, productRepository, request)
+	productService := _productService.NewProductService(productRepository, request)
+	categoryService := _categoryService.NewCategoryService(productRepository, request)
+	brandService := _brandService.NewBrandService(productRepository, request)
 	orderService := _orderService.NewOrderService(orderRepository, request)
 
 	// customer entity
-	customerService := _customerService.NewCustomerService(db, customerRepository, request)
+	customerService := _customerService.NewCustomerService(customerRepository, request)
 
 	// initiate controller
 	controller := _controller.NewController(db,

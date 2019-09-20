@@ -5,7 +5,6 @@ import (
 	"errors"
 	clog "log"
 
-	"github.com/jinzhu/gorm"
 	log "github.com/sirupsen/logrus"
 
 	"magento-consumer-service/config"
@@ -14,14 +13,12 @@ import (
 )
 
 type brandService struct {
-	DB         *gorm.DB
 	Repository product.ProductRepository
 	Request    config.Request
 }
 
-func NewBrandService(db *gorm.DB, repository product.ProductRepository, request config.Request) BrandService {
+func NewBrandService(repository product.ProductRepository, request config.Request) BrandService {
 	return &brandService{
-		DB:         db,
 		Repository: repository,
 		Request:    request,
 	}

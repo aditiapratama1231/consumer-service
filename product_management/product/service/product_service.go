@@ -5,7 +5,6 @@ import (
 	clog "log"
 	"strconv"
 
-	"github.com/jinzhu/gorm"
 	log "github.com/sirupsen/logrus"
 
 	"magento-consumer-service/config"
@@ -14,14 +13,12 @@ import (
 )
 
 type productService struct {
-	DB         *gorm.DB
 	Repository product.ProductRepository
 	Request    config.Request
 }
 
-func NewProductService(db *gorm.DB, repository product.ProductRepository, request config.Request) ProductService {
+func NewProductService(repository product.ProductRepository, request config.Request) ProductService {
 	return &productService{
-		DB:         db,
 		Repository: repository,
 		Request:    request,
 	}

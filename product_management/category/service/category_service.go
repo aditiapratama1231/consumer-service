@@ -5,7 +5,6 @@ import (
 	clog "log"
 	"strconv"
 
-	"github.com/jinzhu/gorm"
 	log "github.com/sirupsen/logrus"
 
 	"magento-consumer-service/config"
@@ -14,14 +13,12 @@ import (
 )
 
 type categoryService struct {
-	DB         *gorm.DB
 	Repository product.ProductRepository
 	Request    config.Request
 }
 
-func NewCategoryService(db *gorm.DB, repository product.ProductRepository, request config.Request) CategoryService {
+func NewCategoryService(repository product.ProductRepository, request config.Request) CategoryService {
 	return &categoryService{
-		DB:         db,
 		Repository: repository,
 		Request:    request,
 	}
