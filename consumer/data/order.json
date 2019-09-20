@@ -1,8 +1,8 @@
 {
     "head": {
-        "service": "product",
-        "domain": "category",
-        "action": "create",
+        "service": "order",
+        "domain": "order",
+        "action": "update",
         "dashboard_id": "1"
     },
     "body": {
