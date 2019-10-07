@@ -9,7 +9,8 @@
 ## Running Service
 - `go install`
 - `go get -u`
-- `go run main.go` to run the server
+- `go run main.go` to run the server.
+- After run main.go, the server ready to consume data from [more](https://github.com/aditiapratama1231/aws-stream-example)
 
 ## Debugging
 - Please to update `REQUEST_DEBUG` to true, to debug request traffic
@@ -22,3 +23,6 @@
 - `soda drop -e development` (to drop or delete database) [more](https://gobuffalo.io/en/docs/db/toolbox/)
 - migration up : `soda migrate -p database up` (`database` is folder which is where migrations folder laid) [more](https://gobuffalo.io/en/docs/db/migrations/)
 - migration down : `soda migrate -p database down -s {number of database want to down}`
+
+## Producer Example
+- https://github.com/aditiapratama1231/aws-stream-example
